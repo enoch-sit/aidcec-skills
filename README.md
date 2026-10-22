@@ -14,4 +14,5 @@ The product skills can also be installed on their own:
 gh skill install enoch-sit/aidcec-skills use-tokenproxy --agent cursor --scope user
 gh skill install enoch-sit/aidcec-skills use-mcp-hub --agent cursor --scope user
 gh skill install enoch-sit/aidcec-skills use-cli-hub --agent cursor --scope user
+gh skill install enoch-sit/aidcec-skills evaluate-chatbot --agent cursor --scope user
 ```

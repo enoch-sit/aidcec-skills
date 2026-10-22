@@ -11,7 +11,7 @@ Read the key from `TOKENPROXY_API_KEY`, then `AIDCEC_KEY`, then `~/.aidcec/confi
 
 ## Before a long job
 
-`GET /v1/account` returns `allowedModels`, `defaultModel`, `costCapUsd`, `costCapPeriod`, and `spentMicro` (micro-USD). Stop if the remaining cap cannot cover the job. `GET /v1/models` lists the models this key may call.
+`GET /v1/account` returns `allowedModels`, `defaultModel`, `costCapUsd`, `costCapPeriod`, and `spentMicro` (micro-USD). Stop if the remaining cap cannot cover the job. `GET /v1/models` lists the models this key may call. `GET /v1/account/logs` returns this key's chats for evaluation; a group project key keeps about 30 days. See the `evaluate-chatbot` skill.
 
 ## Calls
 
