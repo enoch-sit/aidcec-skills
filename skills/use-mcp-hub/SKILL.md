@@ -25,3 +25,12 @@ Management tools on `/mcp`: `hub_whoami`, `hub_server_create`, `hub_server_list`
 Do not call `hub_secret_set` from chat. Tell the user to run `aidcec hub secret set <id> <name>`, or to put `{"env":"VENDOR_API_KEY"}` in `server.json` and run `aidcec hub apply`.
 
 To connect Cursor or VS Code, run `aidcec mcp config --client cursor --server <srv_id>` or `--client vscode` and let the user paste the snippet. The command prints a placeholder, not the key, unless they pass `--inline-key`.
+
+## From a published class page
+
+A student page on `project-*.aidcec-ai-agent.com` must not hold a key or call this hub directly. It calls the same-site route `POST /mcp/v1` (built-in tools) or `POST /mcp/v1/u/<srv_id>` (the group's own server). The page host adds the group key and forwards the JSON-RPC body here. These routes work only on the published site, not in a file opened on the student's computer.
+
+- `/mcp/v1` allows `apa_audit_citations`, `apa_format_reference`, `kb_me`, `kb_search`, `kb_ask`, and every `dgh_*` tool. `/mcp/v1/u/<srv_id>` allows every tool except names ending in `_insert`, `_update` or `_delete`.
+- `tools/list` is trimmed to those tools. A refused call returns JSON-RPC error `-32601` `tool_not_allowed`; in a batch, only that item fails.
+- Per site: 30 calls a minute, 64 KB request, 10 messages per batch, 60 s per call, 1 MB response. On a public site, any visitor's `kb_ask` spends the group's monthly budget.
+- Full guide: `https://api.aidcec-ai-agent.com/guides/vibe-coding/SKILL.md?download=1` (section "Class MCP tools — `/mcp/v1`").
