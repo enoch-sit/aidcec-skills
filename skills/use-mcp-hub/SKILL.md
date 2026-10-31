@@ -11,6 +11,8 @@ Streamable HTTP, stateless, JSON responses. Header: `Authorization: Bearer` plus
 
 Built-in tools on that URL include `apa_audit_citations`, `apa_format_reference`, `logs_export`, and the `kb_*` knowledge-base tools. A key's own servers are separate.
 
+`/mcp` lists every tool. `/mcp?profile=default` (or header `x-mcp-profile: default`) lists 12: `hub_whoami`, `catalog_search`, `catalog_describe`, `catalog_call`, `kb_search`, `kb_ask`, `apa_audit_citations`, `apa_format_reference`, `logs_export`, `hub_server_list`, `hub_server_get`, `skill_list`. With that profile, find a tool with `catalog_search {query}`, read its schema with `catalog_describe {name}`, and run it with `catalog_call {name, arguments}`. A hosted tool is named `<srv_id>.<tool>`. `catalog_call` applies the same key, owner and input checks as calling the tool directly.
+
 ## Group knowledge base
 
 `kb_*` on `POST /mcp` forwards the caller's bearer key to `https://db.aidcec-ai-agent.com`. Use the group project key. A personal key is rejected. The same key still has its model list, cost cap, quota, and chat log.
@@ -25,7 +27,7 @@ Poll `kb_job_status` after a crawl or upload. Evaluation can call `logs_export` 
 
 Endpoint: `https://mcp-hub.aidcec-ai-agent.com/mcp/u/<srv_id>` with the same bearer key.
 
-Management tools on `/mcp`: `hub_whoami`, `hub_server_create`, `hub_server_list`, `hub_server_get`, `hub_server_update`, `hub_server_delete`, `hub_tool_put`, `hub_tool_delete`, `hub_table_counts`, `hub_table_clear`, `hub_secret_set`, `hub_secret_delete`, `hub_secret_list`, `hub_server_export`.
+Management tools on `/mcp`: `hub_whoami`, `hub_server_create`, `hub_server_list`, `hub_server_get`, `hub_server_update`, `hub_server_delete`, `hub_tool_put`, `hub_tool_delete`, `hub_table_counts`, `hub_table_clear`, `hub_secret_list` (names only), `hub_server_export`.
 
 - Each key owns at most 20 `mcp` servers and 20 `cli` bundles, 20 tools each.
 - `kind` is `mcp` or `cli`. `visibility` is `public` or `private`.
@@ -36,7 +38,7 @@ Management tools on `/mcp`: `hub_whoami`, `hub_server_create`, `hub_server_list`
 - A person can do the same in the browser at `https://mcp-hub.aidcec-ai-agent.com/db/?id=<srv_id>`: browse, filter, stats, upload Excel or CSV, export CSV, clear a table. Point students there instead of writing a UI.
 - `hub_table_counts {serverId}` returns rows per table. `hub_table_clear {serverId, name}` deletes every row and keeps the columns (owner only). While a table has rows, `hub_tool_put` refuses to remove or retype a column or to add a required one; clear first, or add the column as optional.
 
-Do not call `hub_secret_set` from chat. Tell the user to run `aiep hub secret set <id> <name>`, or to put `{"env":"VENDOR_API_KEY"}` in `server.json` and run `aiep hub apply`.
+Secret values never go over MCP: `hub_secret_set` and `hub_secret_delete` return `human_only`. Tell the user to run `aiep hub secret set <id> <name>` (or `aiep hub secret rm`) in a terminal, which asks for the value at a hidden prompt, or to put `{"env":"VENDOR_API_KEY"}` in `server.json` and run `aiep hub apply`.
 
 To connect Cursor or VS Code, run `aiep mcp config --client cursor --server <srv_id>` or `--client vscode` and let the user paste the snippet. The command prints a placeholder, not the key, unless they pass `--inline-key`.
 

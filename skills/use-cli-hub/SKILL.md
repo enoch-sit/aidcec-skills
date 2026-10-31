@@ -15,7 +15,9 @@ irm https://cli-hub.aidcec-ai-agent.com/install.ps1 | iex
 curl -fsSL https://cli-hub.aidcec-ai-agent.com/install.sh | sh
 ```
 
-The key is read from `--key`, then `TOKENPROXY_API_KEY`, then `AIDCEC_KEY`, then `~/.aidcec/config.json`. Ask the user to run `aiep login` themselves. Never ask them to paste a key into chat, and never print a key. `--verbose` shows only the first 15 characters.
+The key is read from `--key`, then `TOKENPROXY_API_KEY`, then `AIDCEC_KEY`, then `~/.aidcec/config.json`. Ask the user to run `aiep login` themselves; it asks for the key at a hidden prompt and refuses when stdin is not a terminal. `aiep hub secret set` and `rm` work the same way. Never ask them to paste a key into chat, and never print a key. `--verbose` shows only the first 15 characters.
+
+`aiep schema` (or `aiep help --json`) prints every command, its arguments and flags as JSON. Read it instead of guessing flags.
 
 ## Commands
 
