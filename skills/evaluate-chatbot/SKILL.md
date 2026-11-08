@@ -20,6 +20,8 @@ Logs are redacted. Do not try to re-identify classmates.
 
 Save every page to `logs.json`. Follow `next` until it is null. `days` is 1 to 30 (default 7). `limit` is at most 1000.
 
+The same page is available from the MCP hub as `logs_export` on `POST https://mcp-hub.aidcec-ai-agent.com/mcp`, with the same group key. There `limit` is at most 200. Pass the returned `next` as `before` on the next call. `GET /v1/account/logs` below is the direct call.
+
 ```sh
 curl -sS "https://api.aidcec-ai-agent.com/v1/account/logs?days=7" \
   -H "Authorization: Bearer $TOKENPROXY_API_KEY" \
@@ -28,11 +30,13 @@ curl -sS "https://api.aidcec-ai-agent.com/v1/account/logs?days=7" \
 
 The next page is the same URL plus `&before=` set to the previous `next` value.
 
-A group key returns `{ source: "archive", retentionDays, records, next, errors }`. Each record is `{ at, requestId, model, inputTokens, outputTokens, costMicro, body }`. `body` is `{ messages, output }` with secrets masked. `errors` lists recent failed calls (`requestId`, `at`, `model`, `status`, `errorCode`) and is only the gateway's recent memory, not the 30 day archive.
+To fetch one browser session, add `&user=<id>`. This matches the `user` field the page sent with the chat, such as a session id like `s-…`. Only letters, digits and `_ . : -` are kept, up to 128 characters. Other values, such as emails, are not stored, and a bad `user` query returns 400.
+
+A group key returns `{ source: "archive", retentionDays, records, next, errors }`. Each record is `{ at, requestId, model, inputTokens, outputTokens, costMicro, body }`, plus `user` when the page sent one. Chats from before 24 Oct 2026 have no `user`, so match those by `requestId`. `body` is `{ messages, output }` with secrets masked. `errors` lists recent failed calls (`requestId`, `at`, `model`, `status`, `errorCode`) and is only the gateway's recent memory, not the 30 day archive.
 
 ## 2. Rebuild conversations
 
-Each request sends the whole `messages` list. A later record continues an earlier one when its `messages` start with the earlier record's `messages` followed by that record's `output`. Group those into one conversation. A page may also send `x-site-session` or a `sessionId`; use it when it is present. It is optional, and the gateway does not require it.
+Each request sends the whole `messages` list. A later record continues an earlier one when its `messages` start with the earlier record's `messages` followed by that record's `output`. Group those into one conversation. When a record has `user`, use it to group a session. It is optional, and the gateway does not require it. The `x-site-session` header is not stored.
 
 ## 3. Token and cost
 
